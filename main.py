@@ -70,15 +70,28 @@ class GUI(ctk.CTk):
     def create_buttons(self, x, y, chosen_car, dic, color_dic, multiplier=1):
         self.x = x
         self.y = y
-        c_w = [i for i in range(0, self.x)]
-        r_w = [i for i in range(0, self.y)]
-        self.grid_columnconfigure(c_w, weight=1)
-        self.grid_rowconfigure(r_w, weight=1)
+        
         self.buttons = []
         self.buttons_1 = []
-        self.geometry(f"{self.x*80}x{self.y*80}")
+        self.geometry(f"{self.x*80}x{self.y*80+100}")
+        var = ctk.StringVar()
+        var.set(" ")
         
-     
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        frame = ctk.CTkFrame(self)
+        c_w = [i for i in range(0, self.x)]
+        r_w = [i for i in range(0, self.y)]
+        frame.grid_columnconfigure(c_w, weight=1)
+        frame.grid_rowconfigure(r_w, weight=1)
+        frame.grid(row=0, column=0, sticky="nsew")
+        
+        frame2 = ctk.CTkFrame(self)
+        frame2.grid(row=1, column=0, sticky="nsew")
+        
+        
+        
+        
         for i in range(0, self.y):
             for j in range(0, self.x):
                 try: 
@@ -87,13 +100,26 @@ class GUI(ctk.CTk):
                 except:
                     color = "grey"
                     text = " "
-                button = ctk.CTkButton(self, text=text, fg_color="white", text_color=color, corner_radius=10, font=("Arial", 80))
+                
+                button = ctk.CTkButton(frame, text=text, fg_color="white", text_color=color, corner_radius=10, font=("Arial", 80), textvariable=var)
                 button.configure(command=lambda i=button: self.button_click(i))
                 button.grid(row=i%self.y, column=j, pady=5, padx=5, sticky="nsew")
                 self.buttons_1.append(button)
             self.buttons.append(self.buttons_1)
         print(i for i in self.buttons)
-    
+        
+        col = 0
+        row = 1
+        for i in self.color_dic:
+            col += 1
+            if col == 16:
+                col = 1
+                row += 1
+            button = ctk.CTkButton(frame2, text=i, fg_color="white", text_color="black", corner_radius=100, width=10)
+            button.configure(command=lambda i=button: self.button_click(i))
+            button.grid(row=row, column=col, pady=5, padx=5, sticky="nsew")
+            
+        
 
 
 class Application(GUI):
@@ -102,7 +128,7 @@ class Application(GUI):
         self.update()   
         
         self.randomgenerate = RandomNumberGenerator()
-        self.dic, lst = self.randomgenerate.read_file("car.txt")
+        self.dic, self.lst = self.randomgenerate.read_file("car.txt")
         self.color_dic = {
             "/": "black",
             "|": "black",
@@ -138,8 +164,8 @@ class Application(GUI):
             "<": "gray",
             ">": "gray",
         }
-        self.chosen_car = random.choice(lst)
-        self.chosen_car = lst
+        self.chosen_car = random.choice(self.lst)
+        self.chosen_car = self.lst
         longest = 0
         print(self.chosen_car)
         print()
@@ -162,9 +188,11 @@ class Application(GUI):
             self.update()
     
     def button_click(self, button):
-            
-        self.dic[button.cget("text")]
-
+        x = self.color_dic[button.cget("text")]
+        print(button.cget("text"))
+        print(x)
+        
+        
         
 if __name__ == "__main__":
     app = Application()
