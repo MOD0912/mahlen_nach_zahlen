@@ -1,6 +1,5 @@
 import customtkinter as ctk
 import random
-
 ctk.deactivate_automatic_dpi_awareness()
 
 class RandomNumberGenerator:
@@ -73,7 +72,6 @@ class GUI(ctk.CTk):
         
         self.buttons = []
         self.buttons_1 = []
-        self.geometry(f"{self.x*80}x{self.y*80+100}")
         var = ctk.StringVar()
         var.set(" ")
         
@@ -95,8 +93,8 @@ class GUI(ctk.CTk):
         for i in range(0, self.y):
             for j in range(0, self.x):
                 try: 
-                    color = color_dic[chosen_car[i//1][j//1]]
-                    text = chosen_car[i//1][j//1]
+                    color = color_dic[chosen_car[i//multiplier][j//multiplier]]
+                    text = chosen_car[i//multiplier][j//multiplier]
                 except:
                     color = "grey"
                     text = " "
@@ -106,18 +104,32 @@ class GUI(ctk.CTk):
                 button.grid(row=i%self.y, column=j, pady=5, padx=5, sticky="nsew")
                 self.buttons_1.append(button)
             self.buttons.append(self.buttons_1)
-        print(i for i in self.buttons)
+        
+        print(len(self.dic))
         
         col = 0
-        row = 1
-        for i in self.color_dic:
-            col += 1
-            if col == 16:
-                col = 1
-                row += 1
-            button = ctk.CTkButton(frame2, text=i, fg_color="white", text_color="black", corner_radius=100, width=10)
-            button.configure(command=lambda i=button: self.button_click(i))
-            button.grid(row=row, column=col, pady=5, padx=5, sticky="nsew")
+        row = 0
+        lst = []
+        for i in self.chosen_car:
+            for j in i:
+                if j not in lst:
+                    lst.append(j)
+        print()
+        print(lst)
+        print()
+        
+        c_w = [i for i in range(0, len(lst)//2)]
+        frame2.grid_columnconfigure(c_w, weight=1)
+        frame2.grid_rowconfigure((0, 1), weight=1)
+        for j in dic
+        for count, i in enumerate(lst):
+                if col == len(lst)//2:
+                    col = 0
+                    row += 1
+                button = ctk.CTkButton(frame2, text=dic.keys[count], fg_color="white", text_color="black", corner_radius=100, width=10)
+                button.configure(command=lambda i=button: self.button_click(i))
+                button.grid(row=row, column=col, pady=5, padx=5, sticky="nsew")
+                col += 1
             
         
 
@@ -127,6 +139,8 @@ class Application(GUI):
         super().__init__()
         self.update()   
         
+        
+        self.bind("<Alt_L>", lambda e: self.suicide())
         self.randomgenerate = RandomNumberGenerator()
         self.dic, self.lst = self.randomgenerate.read_file("car.txt")
         self.color_dic = {
@@ -165,9 +179,10 @@ class Application(GUI):
             ">": "gray",
         }
         self.chosen_car = random.choice(self.lst)
-        self.chosen_car = self.lst
-        longest = 0
         print(self.chosen_car)
+        self.chosen_car = self.lst
+        print(self.chosen_car)
+        longest = 0
         print()
         print()
         for i in self.chosen_car:
@@ -184,13 +199,19 @@ class Application(GUI):
         self.updat()
         
     def updat(self):
-        while True:
+        self.excep = False
+        while True and not self.excep:
             self.update()
     
     def button_click(self, button):
         x = self.color_dic[button.cget("text")]
         print(button.cget("text"))
         print(x)
+    
+    def suicide(self):
+        self.excep = True
+        exit()
+        
         
         
         
