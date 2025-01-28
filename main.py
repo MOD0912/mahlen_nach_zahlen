@@ -27,21 +27,7 @@ class RandomNumberGenerator:
                     if x not in lst3 and x != "Ã" and x != "Ÿ" and x != "\n":
                         lst3.append(x)
 
-
-        print(lst3)
-
-        self.dic = {}
-        lst4 = [i for i in range(len(lst3))]
- 
-
-        for i in lst3:
-            x = random.choice(lst4)
-            lst4.remove(x)
-            self.dic[x] = i
-        for i in lst[0]:
-            print(i)
-        print(self.dic)
-        return self.dic, lst[1]
+        return lst
         
     
     def generate_number(self, button, real_result, x, y):
@@ -65,8 +51,9 @@ class GUI(ctk.CTk):
         super().__init__()
         self.title("Mahlen nach Zahlen")
         self.car = []
+        self.active_button = None  
         
-    def create_buttons(self, x, y, chosen_car, dic, color_dic, multiplier=1):
+    def create_buttons(self, x, y, chosen_car, color_dic, multiplier=1):
         self.x = x
         self.y = y
         
@@ -88,24 +75,24 @@ class GUI(ctk.CTk):
         frame2.grid(row=1, column=0, sticky="nsew")
         
         
-        
-        
+        print("lst")
+        counter = -1
+        print(self.full_lst[5][1])
         for i in range(0, self.y):
             for j in range(0, self.x):
-                try: 
-                    color = color_dic[chosen_car[i//multiplier][j//multiplier]]
-                    text = chosen_car[i//multiplier][j//multiplier]
+                counter+=1
+                try:
+                    text = self.full_lst[counter][1]
+                    print(self.full_lst)
                 except:
-                    color = "grey"
                     text = " "
-                
-                button = ctk.CTkButton(frame, text=text, fg_color="white", text_color=color, corner_radius=10, font=("Arial", 80), textvariable=var)
+                #color = color_dic[self.full_lst[counter][0]]
+            
+                button = ctk.CTkButton(frame, text=text, fg_color="white", text_color="black", corner_radius=10, font=("Arial", 80))
                 button.configure(command=lambda i=button: self.button_click(i))
                 button.grid(row=i%self.y, column=j, pady=5, padx=5, sticky="nsew")
                 self.buttons_1.append(button)
             self.buttons.append(self.buttons_1)
-        
-        print(len(self.dic))
         
         col = 0
         row = 0
@@ -114,26 +101,26 @@ class GUI(ctk.CTk):
             for j in i:
                 if j not in lst:
                     lst.append(j)
-        print()
-        print(lst)
-        print()
-        
         c_w = [i for i in range(0, len(lst)//2)]
         frame2.grid_columnconfigure(c_w, weight=1)
         frame2.grid_rowconfigure((0, 1), weight=1)
-        for j in dic
-        for count, i in enumerate(lst):
-                if col == len(lst)//2:
+        print("dic")
+        print(self.dic)
+        for count, i in enumerate(self.dic):
+                if col == len(self.dic)//2:
                     col = 0
                     row += 1
-                button = ctk.CTkButton(frame2, text=dic.keys[count], fg_color="white", text_color="black", corner_radius=100, width=10)
-                button.configure(command=lambda i=button: self.button_click(i))
+                button = ctk.CTkButton(frame2, text=self.dic[count][1], fg_color="white", text_color="black", corner_radius=100, width=10)
+                button.configure(command=lambda i=button: self.activate_button(i))
                 button.grid(row=row, column=col, pady=5, padx=5, sticky="nsew")
                 col += 1
             
         
-
-
+    def activate_button(self, button):
+        self.active_button = button
+        
+        
+        
 class Application(GUI):
     def __init__(self):
         super().__init__()
@@ -142,7 +129,7 @@ class Application(GUI):
         
         self.bind("<Alt_L>", lambda e: self.suicide())
         self.randomgenerate = RandomNumberGenerator()
-        self.dic, self.lst = self.randomgenerate.read_file("car.txt")
+        self.lst = self.randomgenerate.read_file("car.txt")
         self.color_dic = {
             "/": "black",
             "|": "black",
@@ -177,10 +164,9 @@ class Application(GUI):
             "b": "pink",
             "<": "gray",
             ">": "gray",
+            ",": "gray",
         }
         self.chosen_car = random.choice(self.lst)
-        print(self.chosen_car)
-        self.chosen_car = self.lst
         print(self.chosen_car)
         longest = 0
         print()
@@ -189,13 +175,43 @@ class Application(GUI):
             if len(i) > longest:
                 longest = len(i)
             print(i)
+        print("self.chosen_car")
+        print(self.chosen_car)
+        for i in range(len(self.chosen_car)):
+            while len(self.chosen_car[i]) < longest:
+                self.chosen_car[i]+=" "
         height = len(self.chosen_car)
         multiplier = 1
         x = longest * multiplier
         y = height * multiplier
+        print("x, y")
         print(x, y)
         
-        self.create_buttons(x, y, self.chosen_car, self.dic, self.color_dic, multiplier)
+        self.dic = []
+        self.full_lst = []
+        counter = 0
+        for i in self.chosen_car:
+            print(i)
+            counter += len(i)
+        lst4 = [i for i in range(counter)]
+        lst5 = []
+        for w in self.chosen_car:
+            for i in w:
+                z = random.choice(lst4)
+                
+                if i in lst5:
+                    jj = self.dic[lst5.index(i)][1]
+                    self.full_lst.append([i, jj])
+                    continue
+                else:
+                    self.full_lst.append([i, z])
+                lst4.remove(z)
+                lst5.append(i)
+                self.dic.append([i, z])
+                
+
+        
+        self.create_buttons(x, y, self.chosen_car, self.color_dic, multiplier)
         self.updat()
         
     def updat(self):
@@ -204,9 +220,16 @@ class Application(GUI):
             self.update()
     
     def button_click(self, button):
-        x = self.color_dic[button.cget("text")]
         print(button.cget("text"))
-        print(x)
+        for i in self.dic:
+            val = int(button.cget("text"))
+            if i[1] == val:
+                right = i[0]
+                break
+        print(right)
+        print(self.color_dic[right])
+        if self.active_button != None and val == int(self.active_button.cget("text")):
+            button.configure(text=right, text_color=self.color_dic[right])  
     
     def suicide(self):
         self.excep = True
