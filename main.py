@@ -84,7 +84,7 @@ class GUI(ctk.CTk):
                 try:
                     text = self.full_lst[counter][1]
                     print(self.full_lst)
-                except:
+                except IndexError:
                     text = " "
                 #color = color_dic[self.full_lst[counter][0]]
             
@@ -231,9 +231,12 @@ class Application(GUI):
                 right = i[0]
                 break
         print(right)
-        print(self.color_dic[right])
+        try:
+            color = self.color_dic[right]
+        except:
+            color = "black"
         if self.active_button != None and val == int(self.active_button.cget("text")):
-            button.configure(text=right, text_color=self.color_dic[right])  
+            button.configure(text=right, text_color=color)  
     
     def suicide(self):
         self.excep = True
