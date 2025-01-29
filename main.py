@@ -88,7 +88,7 @@ class GUI(ctk.CTk):
                     text = " "
                 #color = color_dic[self.full_lst[counter][0]]
             
-                button = ctk.CTkButton(frame, text=text, fg_color="white", text_color="black", corner_radius=10, font=("Arial", 80))
+                button = ctk.CTkButton(frame, text=text, fg_color="white", text_color="black", corner_radius=10, font=("Arial", 80), width=10, height=80)
                 button.configure(command=lambda i=button: self.button_click(i))
                 button.grid(row=i%self.y, column=j, pady=5, padx=5, sticky="nsew")
                 self.buttons_1.append(button)
@@ -117,6 +117,9 @@ class GUI(ctk.CTk):
             
         
     def activate_button(self, button):
+        if self.active_button != None:
+            self.active_button.configure(fg_color="white")
+        button.configure(fg_color="light blue")
         self.active_button = button
         
         
@@ -165,6 +168,7 @@ class Application(GUI):
             "<": "gray",
             ">": "gray",
             ",": "gray",
+            "Y": "gray",
         }
         self.chosen_car = random.choice(self.lst)
         print(self.chosen_car)
