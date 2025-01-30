@@ -50,10 +50,10 @@ class GUI(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Mahlen nach Zahlen")
-        self.car = []
+        self.cat = []
         self.active_button = None  
         
-    def create_buttons(self, x, y, chosen_car, color_dic, multiplier=1):
+    def create_buttons(self, x, y, chosen_cat, color_dic, multiplier=1):
         self.x = x
         self.y = y
         
@@ -97,7 +97,7 @@ class GUI(ctk.CTk):
         col = 0
         row = 0
         lst = []
-        for i in self.chosen_car:
+        for i in self.chosen_cat:
             for j in i:
                 if j not in lst:
                     lst.append(j)
@@ -132,7 +132,7 @@ class Application(GUI):
         
         self.bind("<Alt_L>", lambda e: self.suicide())
         self.randomgenerate = RandomNumberGenerator()
-        self.lst = self.randomgenerate.read_file("car.txt")
+        self.lst = self.randomgenerate.read_file("cats.txt")
         self.color_dic = {
             "/": "black",
             "|": "black",
@@ -170,21 +170,21 @@ class Application(GUI):
             ",": "gray",
             "Y": "gray",
         }
-        self.chosen_car = random.choice(self.lst)
-        print(self.chosen_car)
+        self.chosen_cat = random.choice(self.lst)
+        print(self.chosen_cat)
         longest = 0
         print()
         print()
-        for i in self.chosen_car:
+        for i in self.chosen_cat:
             if len(i) > longest:
                 longest = len(i)
             print(i)
-        print("self.chosen_car")
-        print(self.chosen_car)
-        for i in range(len(self.chosen_car)):
-            while len(self.chosen_car[i]) < longest:
-                self.chosen_car[i]+=" "
-        height = len(self.chosen_car)
+        print("self.chosen_cat")
+        print(self.chosen_cat)
+        for i in range(len(self.chosen_cat)):
+            while len(self.chosen_cat[i]) < longest:
+                self.chosen_cat[i]+=" "
+        height = len(self.chosen_cat)
         multiplier = 1
         x = longest * multiplier
         y = height * multiplier
@@ -194,12 +194,12 @@ class Application(GUI):
         self.dic = []
         self.full_lst = []
         counter = 0
-        for i in self.chosen_car:
+        for i in self.chosen_cat:
             print(i)
             counter += len(i)
         lst4 = [i for i in range(counter)]
         lst5 = []
-        for w in self.chosen_car:
+        for w in self.chosen_cat:
             for i in w:
                 z = random.choice(lst4)
                 
@@ -215,7 +215,7 @@ class Application(GUI):
                 
 
         
-        self.create_buttons(x, y, self.chosen_car, self.color_dic, multiplier)
+        self.create_buttons(x, y, self.chosen_cat, self.color_dic, multiplier)
         self.updat()
         
     def updat(self):
